@@ -2,30 +2,18 @@ import IPasswordHasher from "../repositories/IPasswordHasher";
 import { validateWithRegex } from "../shared/regex_validation";
 
 class Password {
-  private static readonly regex = /^.{8,}$/;
-
-  private static readonly errorMessage = "Password is Invalid";
-
-  constructor(
-    private hashedPassword: string,
-    private hasher: IPasswordHasher
-  ) {}
-
-  private static validatePasswordData(password: string): string {
-    const validatedPassword = validateWithRegex(
-      password,
-      Password.regex,
-      Password.errorMessage
-    );
-
-    return validatedPassword;
+  private constructor(private hashedPassword: string) {}
+  getPassword(): string {
+    return this.hashedPassword;
   }
 
-  async comparePassword(password: string): Promise<boolean> {
-    return await this.hasher.comparePassword(
-      Password.validatePasswordData(password),
-      this.hashedPassword
-    );
+  static create(hashedPassword: string): Password {
+    if (hashedPassword.length != 60 || typeof hashedPassword != "string")
+      throw new Error("Invalid hashing");
+    return new Password(hashedPassword);
+  }
+  equals(other: Password): boolean {
+    return this.hashedPassword === other.getPassword();
   }
 }
 
