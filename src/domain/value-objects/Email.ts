@@ -4,14 +4,22 @@ class Email {
   private static readonly regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   private static readonly errorMessage = "Invalid Email";
 
-  constructor(private email: string) {
+  private constructor(private email: string) {
     if (!email || email.trim() === "" || typeof email != "string")
       throw new Error(Email.errorMessage);
     this.email = Email.validateData(email);
   }
 
+  static create(email: string): Email {
+    return new Email(email);
+  }
+
   getEmail(): string {
     return this.email.trim();
+  }
+
+  equals(other: Email): boolean {
+    return this.email === other.getEmail();
   }
 
   private static validateData(email: string): string {
