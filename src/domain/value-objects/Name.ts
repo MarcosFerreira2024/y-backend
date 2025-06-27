@@ -3,14 +3,22 @@ import { validateWithRegex } from "../shared/regex_validation";
 class Name {
   private static readonly regex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]{2,50}$/;
   private static readonly errorMessage = "Invalid name";
-  constructor(private name: string) {
-    if (!name || name.trim() === "" || typeof name != "string")
-      throw new Error(Name.errorMessage);
+  private constructor(private name: string) {
     this.name = Name.validateData(name);
   }
 
   getName(): string {
     return this.name.trim();
+  }
+
+  static create(name: string): Name {
+    if (!name || name.trim() === "" || typeof name != "string")
+      throw new Error(Name.errorMessage);
+    return new Name(name);
+  }
+
+  equals(other: Name): boolean {
+    return this.name === other.getName();
   }
 
   private static validateData(name: string): string {
