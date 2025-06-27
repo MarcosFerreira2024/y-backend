@@ -5,10 +5,14 @@ class Id {
 
   private static readonly errorMessage = "Invalid Id";
 
-  constructor(private id: string) {
+  private constructor(private id: string) {
+    this.id = Id.validateData(id);
+  }
+
+  static create(id: string): Id {
     if (!id || id.trim() === "" || typeof id != "string")
       throw new Error(Id.errorMessage);
-    this.id = Id.validateData(id);
+    return new Id(id);
   }
 
   getId(): string {
