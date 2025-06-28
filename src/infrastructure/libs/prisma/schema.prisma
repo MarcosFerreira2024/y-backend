@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../../db/dev.db"
+}
+
+
+model User {
+  id Int @id @default(autoincrement())
+  name String 
+  slug String @unique
+  email String @unique
+  password String
+  profile_picture String?
+  profile_bg String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  notifications Notification[]
+  posts Post[]
+  likes Post_like[]
+  received_friendships Friendship[] @relation("received")
+  sended_friendships Friendship[] @relation("sended")
+}
+model Friendship {
+  id Int @id @default(autoincrement())
+  user_id Int 
+  user User @relation("sended",fields: [user_id],references: [id])
+  accepted Boolean @default(false)
+  friend_id Int 
+  friend User @relation("received",fields: [friend_id],references: [id])
+
+  @@unique([user_id,friend_id])
+}
+
+model Post_like {
+  id Int @id @default(autoincrement())
+  user_id Int 
+  user User @relation(fields: [user_id], references: [id])
+  post_id Int 
+  post Post @relation(fields: [post_id], references: [id])
+
+  @@unique([post_id, user_id])
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  image String?
+  content String
+  likes_count Int @default(0)
+  likes Post_like[] 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_id Int
+  author User @relation(fields: [user_id],references: [id])
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  message    String
+  read       Boolean  @default(false)
+  type       NotificationType
+  payload String?
+  created_at DateTime @default(now())
+}
+
+
+enum NotificationType {
+  FRIEND_REQUEST
+  FRIEND_ACCEPTED
+  FRIEND_DECLINED
+  FRIENDSHIP_REMOVED
+  POST_COMMENTED
+  POST_LIKED
+  PASSWORD_CHANGED
+  EMAIL_CHANGED
+  EMAIL_VERIFIED
+  COMMENT_RESPONSE
+}
+
