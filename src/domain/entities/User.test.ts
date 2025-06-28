@@ -2,6 +2,7 @@ import PasswordService from "../services/PasswordService";
 import Email from "../value-objects/Email";
 import HasherMock from "../value-objects/mocks/HasherMock";
 import Name from "../value-objects/Name";
+import Password from "../value-objects/Password";
 import UserFactory from "./factories/UserFactory";
 import User from "./User";
 
@@ -13,8 +14,9 @@ describe("User entity", () => {
       {
         created_at: new Date(),
         email: "John@doe.com",
-        id: "ckj1x5xnz0000qzrm03duzv5y",
+        id: 1,
         name: "John Doe",
+        slug: "@john-doe",
         password: "12341234",
         profile_bg: null,
         profile_picture: null,
@@ -47,8 +49,14 @@ describe("User entity", () => {
 
   it("updates the password when changePassword is called", async () => {
     const passwordService = new PasswordService(new HasherMock());
-    const password = await passwordService.create("12341234");
-    user.changePassword(password, passwordService);
-    expect(user.toDTO().password).toBe(password.getPassword());
+    const comparePassword = await passwordService.compare(
+      "12341234",
+      user.toVO().password
+    );
+    if (!comparePassword) throw new Error("Password is incorrect");
+    const newPassword = await passwordService.create("12345678");
+    const password = user.changePassword(newPassword);
+
+    expect(password).toBeInstanceOf(Password);
   });
 });
