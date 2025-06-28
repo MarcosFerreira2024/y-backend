@@ -14,19 +14,24 @@ describe("Password value object", () => {
     expect(passwordVO).toBeInstanceOf(Password);
   });
 
-  it("should compare the password and return a boolean", async () => {
-    const password = "12341234";
-    const correctPassword = "12341234"; // correct value
-    const incorrectPassword = "12341222"; // incorrect value
-    const passwordVO = await passwordService.create(password);
-
+  it("should compare the password and return a boolean if the password is correct", async () => {
+    const correctPassword = "12341234";
+    const passwordVO = await passwordService.create("12341234");
     const correct = await passwordService.compare(correctPassword, passwordVO);
-    const incorrect = await passwordService.compare(
-      incorrectPassword,
-      passwordVO
-    );
-
     expect(correct).toBe(true);
-    expect(incorrect).toBe(false);
+  });
+
+  it("should throw an error if the password is incorrect", async () => {
+    const incorrectPassword = "12345632423424";
+    const passwordVO = await passwordService.create("12341234");
+    await expect(
+      passwordService.compare(incorrectPassword, passwordVO)
+    ).rejects.toThrow(/Password is incorrect/i);
+  });
+
+  it("should throw an error for a password that is too short", async () => {
+    await expect(passwordService.create("123")).rejects.toThrow(
+      /Password is Invalid/i
+    );
   });
 });
