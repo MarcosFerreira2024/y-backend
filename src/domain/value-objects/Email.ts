@@ -5,12 +5,13 @@ class Email {
   private static readonly errorMessage = "Invalid Email";
 
   private constructor(private email: string) {
-    if (!email || email.trim() === "" || typeof email != "string")
-      throw new Error(Email.errorMessage);
     this.email = Email.validateData(email);
   }
 
   static create(email: string): Email {
+    if (!email || email.trim() === "" || typeof email != "string")
+      throw new Error(Email.errorMessage);
+
     return new Email(email);
   }
 
