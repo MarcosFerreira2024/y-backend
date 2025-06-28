@@ -1,22 +1,30 @@
 import Name from "./Name";
 
 describe("Name value object", () => {
-  const error_message = /invalid name/i;
-
-  it("Should create a Name VO", () => {
+  it("should create a valid Name", () => {
     const name = Name.create("John Doe");
-
     expect(name).toBeInstanceOf(Name);
-  });
-
-  it("Should return a name", () => {
-    const name = Name.create("John Doe");
-
     expect(name.getName()).toBe("John Doe");
   });
 
-  it("Should throw an error", () => {
-    expect(() => Name.create("")).toThrow(error_message);
-    expect(() => Name.create("John Doe 1234")).toThrow(error_message);
+  it("should throw an error for a name with numbers", () => {
+    expect(() => Name.create("John Doe 123")).toThrow("Invalid name");
+  });
+
+  it("should throw an error for a name with less than 2 characters", () => {
+    expect(() => Name.create("J")).toThrow("Invalid name");
+  });
+
+  it("should throw an error for a name with more than 50 characters", () => {
+    const longName = "a".repeat(51);
+    expect(() => Name.create(longName)).toThrow("Invalid name");
+  });
+
+  it("should throw an error for an empty name", () => {
+    expect(() => Name.create("")).toThrow("Invalid name");
+  });
+
+  it("should throw an error for a name with only spaces", () => {
+    expect(() => Name.create("   ")).toThrow("Invalid name");
   });
 });
