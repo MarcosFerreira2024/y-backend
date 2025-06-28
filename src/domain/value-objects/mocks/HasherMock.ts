@@ -7,7 +7,9 @@ class HasherMock implements IPasswordHasher {
     passwordVO: Password
   ): Promise<boolean> {
     const hashed = await this.hashPassword(password);
-    return hashed === passwordVO.getPassword();
+    if (hashed === passwordVO.getPassword()) return true;
+
+    throw new Error("Password is incorrect");
   }
 
   async hashPassword(password: string): Promise<string> {
