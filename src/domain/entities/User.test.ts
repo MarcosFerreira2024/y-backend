@@ -1,4 +1,4 @@
-import PasswordService from "../services/PasswordService";
+import PasswordService from "../../infrastructure/services/PasswordService";
 import Email from "../value-objects/Email";
 import HasherMock from "../value-objects/mocks/HasherMock";
 import Name from "../value-objects/Name";
