@@ -1,39 +1,35 @@
 import IPasswordHasher from "../../repositories/IPasswordHasher";
-import PasswordService from "../../services/PasswordService";
+import PasswordService from "../../../infrastructure/services/PasswordService";
 import Email from "../../value-objects/Email";
 import Name from "../../value-objects/Name";
 import Slug from "../../value-objects/Slug";
-import Id from "../../value-objects/Id";
 import User from "../User";
+import Password from "../../value-objects/Password";
 
-type UserDataDTO = {
-  id: number;
+type FactoryData = {
   name: string;
   email: string;
   password: string;
-  profile_picture: string | null;
-  profile_bg: string | null;
-  created_at: Date;
-  slug: string;
-  updated_at: Date;
+  profile_picture?: string | null;
+  profile_bg?: string | null;
 };
 
-async function UserFactory(data: UserDataDTO, hasher: IPasswordHasher) {
-  const passwordService = new PasswordService(hasher);
-  const password = await passwordService.create(data.password);
-  return new User(
-    Id.create(data.id),
+async function UserFactory(data: FactoryData) {
+  const user = new User(
+    1,
     Name.create(data.name),
     Slug.create(Name.create(data.name)),
     Email.create(data.email),
-    password,
+    Password.create(data.password),
+    new Date(),
+    new Date(),
     data.profile_picture,
-    data.profile_bg,
-    data.created_at,
-    data.updated_at
+    data.profile_bg
   );
+  console.log(user);
+  return user;
 }
 
 export default UserFactory;
 
-export type { UserDataDTO };
+export type { FactoryData };
