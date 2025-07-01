@@ -1,16 +1,20 @@
 import Content from "../../value-objects/Content";
-import Id from "../../value-objects/Id";
 import Post, { PostDataDTO } from "../Post";
 
-function PostFactory(data: PostDataDTO) {
+type FactoryData = {
+  content: string;
+  image?: string;
+};
+
+function PostFactory(data: FactoryData) {
   return new Post(
-    Id.create(data.id),
-    Id.create(data.user_id),
+    1,
+    1,
     Content.create(data.content),
+    new Date(),
+    new Date(),
     data.image,
-    data.created_at,
-    data.updated_at,
-    data.likes_count
+    0
   );
 }
 
