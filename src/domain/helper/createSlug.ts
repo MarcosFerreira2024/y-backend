@@ -5,8 +5,7 @@ export function createSlug(name: string, increment?: boolean): string {
   }
 
   const formattedName = name.toLowerCase().split(" ").join("_");
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 6);
-  const created = `@${formattedName}-${timestamp}${random}${addition}`;
+  const random = Math.random().toString(36).substring(2, 10);
+  const created = `@${formattedName}-${random}${addition}`;
   return created;
 }
