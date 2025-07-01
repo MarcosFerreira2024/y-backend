@@ -1,9 +1,16 @@
-import { Router } from 'express';
+import { Router } from "express";
+import UserController from "../controllers/UserController";
 
-const userRoutes = Router();
+const user_routes = Router();
 
-userRoutes.post('/users', (req, res) => {
-  res.status(201).send();
-});
+user_routes.put(
+  "/user/:id/profile_picture",
+  UserController.changeProfilePicture
+);
+user_routes.put("/user/:id/profile_bg", UserController.changeProfileBg);
+user_routes.put("/user/:id/email", UserController.changeEmail);
+user_routes.put("/user/:id/name", UserController.changeName);
+user_routes.put("/user/:id/password", UserController.changePassword);
+user_routes.delete("/user/:id", UserController.delete);
 
-export { userRoutes };
+export { user_routes };
