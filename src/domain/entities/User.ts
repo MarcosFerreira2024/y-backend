@@ -1,26 +1,24 @@
-import PasswordService from "../services/PasswordService";
 import Email from "../value-objects/Email";
 import Name from "../value-objects/Name";
 import Password from "../value-objects/Password";
 import Slug from "../value-objects/Slug";
-import UserId from "../value-objects/Id";
 
 class User {
   constructor(
-    private id: UserId,
+    private id: number | null,
     private name: Name,
     private slug: Slug,
     private email: Email,
     private password: Password,
-    private profile_picture: string | null,
-    private profile_bg: string | null,
+    private updated_at: Date,
     private created_at: Date,
-    private updated_at: Date
+    private profile_picture?: string | null,
+    private profile_bg?: string | null
   ) {}
 
   toDTO() {
     return {
-      id: this.id.getId(),
+      id: this.id,
       name: this.name.getName(),
       password: this.password.getPassword(),
       email: this.email.getEmail(),
