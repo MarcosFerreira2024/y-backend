@@ -1,19 +1,18 @@
 import Content from "../value-objects/Content";
-import Id from "../value-objects/Id";
 
 type PostDataDTO = {
   id: number;
-  image: string | null;
+  image?: string | null;
   content: string;
-  likes_count: number;
+  likes_count?: number | null;
   created_at: Date;
   updated_at: Date;
   user_id: number;
 };
 
 type PostVO = {
-  id: Id;
-  user_id: Id;
+  id: number | null;
+  user_id: number;
   content: Content;
   image: string | null;
   created_at: Date;
@@ -22,19 +21,19 @@ type PostVO = {
 
 class Post {
   constructor(
-    private id: Id,
-    private user_id: Id,
+    private id: number | null,
+    private user_id: number,
     private content: Content,
-    private image: string | null,
     private created_at: Date,
     private updated_at: Date,
-    private likes_count: number
+    private image?: string | null,
+    private likes_count?: number
   ) {}
 
   toDTO() {
     return {
-      id: this.id.getId(),
-      user_id: this.user_id.getId(),
+      id: this.id,
+      user_id: this.user_id,
       content: this.content.getContent(),
       image: this.image,
       likes_count: this.likes_count,
