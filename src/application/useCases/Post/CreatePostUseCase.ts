@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import PostFactory from "../../../domain/entities/factories/PostFactory";
 import IPostRepository from "../../../domain/repositories/IPostRepository";
+import INotificationService from "../../../domain/services/INotificationService";
 
 @injectable()
 class CreatePostUseCase {
@@ -8,13 +9,14 @@ class CreatePostUseCase {
     @inject("PostRepository") private postRepository: IPostRepository
   ) {}
 
-  async execute(content: string, image?: string): Promise<{ message: string }> {
-    const post = PostFactory({ content, image });
-    const toDTO = post.toDTO();
-    await this.postRepository.create(toDTO);
-    return {
-      message: "Post created successfully",
-    };
+  async execute(
+    user_id: number,
+    content: string,
+    image?: string
+  ): Promise<void> {
+    const post = PostFactory({ user_id, content, image });
+
+    await this.postRepository.create(post.toDTO());
   }
 }
 
