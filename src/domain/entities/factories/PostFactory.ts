@@ -2,13 +2,14 @@ import Content from "../../value-objects/Content";
 import Post, { PostDataDTO } from "../Post";
 
 type FactoryData = {
+  user_id: number;
   content: string;
   image?: string;
 };
 
 function PostFactory(data: FactoryData) {
   return new Post(
-    1,
+    data.user_id,
     1,
     Content.create(data.content),
     new Date(),
