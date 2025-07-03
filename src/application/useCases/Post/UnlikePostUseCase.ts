@@ -7,19 +7,12 @@ class UnlikePostUseCase {
     @inject("PostRepository") private postRepository: IPostRepository
   ) {}
 
-  async execute(
-    post_id: number,
-    user_id: number
-  ): Promise<{ message: string }> {
+  async execute(post_id: number, user_id: number): Promise<void> {
     const post = await this.postRepository.findById(post_id);
     if (!post) {
-      throw new Error("Post not found");
+      throw new Error("Post not found or the post was deleted");
     }
     await this.postRepository.removeLike(post_id, user_id);
-
-    return {
-      message: "Post unliked successfully",
-    };
   }
 }
 
