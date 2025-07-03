@@ -33,11 +33,11 @@ model User {
 }
 model Friendship {
   id Int @id @default(autoincrement())
-  user_id Int 
-  user User @relation("sended",fields: [user_id],references: [id])
+  user_id Int  // quem enviou
+  user User @relation("sended",fields: [user_id],references: [id]) // quem enviou
   accepted Boolean @default(false)
-  friend_id Int 
-  friend User @relation("received",fields: [friend_id],references: [id])
+  friend_id Int  //quem recebeu
+  friend User @relation("received",fields: [friend_id],references: [id]) //quem recebeu
 
   @@unique([user_id,friend_id])
 }
@@ -83,8 +83,12 @@ enum NotificationType {
   FRIENDSHIP_REMOVED
   POST_COMMENTED
   POST_LIKED
+  POST_DELETED
   PASSWORD_CHANGED
   EMAIL_CHANGED
+  PROFILE_CHANGED
+  PROFILEBG_CHANGED
+  NAME_CHANGED
   EMAIL_VERIFIED
   COMMENT_RESPONSE
 }
