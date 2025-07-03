@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import BcryptPasswordHasher from "../../infrastructure/libs/bcrypt/BcryptPasswordHasher";
-import UserRepository from "../../infrastructure/repositories/UserRepository";
 import { zodSchemaHandler } from "../helpers/schemaHandler";
 import CreateUserUseCase from "../../application/useCases/User/CreateUserUseCase";
 import { errorHandler } from "../helpers/errorHandler";
