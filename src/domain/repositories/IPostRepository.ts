@@ -6,6 +6,11 @@ export type PostData = {
   created_at: Date;
   updated_at: Date;
   user_id: number;
+  author: {
+    id: number;
+    name: string;
+    slug: string;
+  };
 };
 
 export type PostCreationInputs = {
