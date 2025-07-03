@@ -1,4 +1,4 @@
-import PasswordService from "../services/PasswordService";
+import PasswordService from "../../infrastructure/services/PasswordService";
 import HasherMock from "./mocks/HasherMock";
 import Password from "./Password";
 
