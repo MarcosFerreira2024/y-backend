@@ -9,9 +9,17 @@ class Slug {
   private readonly value: string;
 
   private constructor(name: Name, increment?: boolean) {
-    const slug = createSlug(name.getName(), increment);
+    const normalized = Slug.normalize(name.getName());
+    const slug = createSlug(normalized, increment);
     Slug.validateData(slug);
     this.value = slug;
+  }
+
+  private static normalize(name: string): string {
+    return name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/['’`´]/g, "");
   }
 
   getValue(): string {
