@@ -1,8 +1,7 @@
-import UserFactory, {
-  UserDataDTO,
-} from "../../domain/entities/factories/UserFactory";
-import User from "../../domain/entities/User";
-import IUserRepository from "../../domain/repositories/IUserRepository";
+import IUserRepository, {
+  UserCreationInputs,
+  UserData,
+} from "../../domain/repositories/IUserRepository";
 import Name from "../../domain/value-objects/Name";
 import Slug from "../../domain/value-objects/Slug";
 import { omitPassword } from "../helper/omitPassword";
@@ -10,7 +9,7 @@ import prisma from "../libs/prisma/PrismaClient";
 
 class UserRepository implements IUserRepository {
   private async tryCreateUserWithSlug(
-    user: UserDataDTO,
+    user: UserCreationInputs,
     slug: string
   ): Promise<void> {
     await prisma.user.create({
@@ -22,29 +21,46 @@ class UserRepository implements IUserRepository {
       },
     });
   }
+  async updateName(
+    id: number,
+    name: string
+  ): Promise<Omit<UserData, "password">> {
+    const updated = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+      },
+    });
+    return omitPassword(updated);
+  }
 
-  async create(user: UserDataDTO): Promise<void> {
-    const maxAttempts = 20;
-    const name = Name.create(user.name);
-    for (let i = 0; i <= maxAttempts; i++) {
+  async create(user: UserCreationInputs): Promise<void> {
+    let attempts = 0;
+    const maxAttempts = 5;
+    let currentSlug = user.slug;
+
+    while (attempts < maxAttempts) {
       try {
-        const slug = Slug.create(name).getValue();
-        await this.tryCreateUserWithSlug(user, slug);
+        await this.tryCreateUserWithSlug(user, currentSlug);
         return;
       } catch (error) {
         if (
           error instanceof Error &&
-          error.message.includes(
-            "Unique constraint failed on the fields: (`slug`)"
-          )
-        )
-          continue;
-        throw error;
+          error.message.includes("Unique constraint failed")
+        ) {
+          attempts++;
+          const name = Name.create(user.name);
+          const newSlug = Slug.create(name, true);
+          currentSlug = newSlug.getValue();
+        } else {
+          throw error;
+        }
       }
     }
 
-    const slug = Slug.create(name, true).getValue();
-    await this.tryCreateUserWithSlug(user, slug);
+    throw new Error("Falha ao criar usuário após múltiplas tentativas de slug");
   }
 
   async delete(id: number): Promise<void> {
@@ -55,21 +71,21 @@ class UserRepository implements IUserRepository {
     });
   }
 
-  async findByEmail(email: string): Promise<UserDataDTO | null> {
+  async findByEmail(email: string): Promise<UserData | null> {
     return await prisma.user.findUnique({
       where: {
         email,
       },
     });
   }
-  async findById(id: number): Promise<UserDataDTO | null> {
+  async findById(id: number): Promise<UserData | null> {
     return await prisma.user.findUnique({
       where: {
         id,
       },
     });
   }
-  async findBySlug(slug: string): Promise<UserDataDTO | null> {
+  async findBySlug(slug: string): Promise<UserData | null> {
     return await prisma.user.findUnique({
       where: {
         slug,
@@ -80,7 +96,7 @@ class UserRepository implements IUserRepository {
   async updatePassword(
     id: number,
     newPassword: string
-  ): Promise<Omit<UserDataDTO, "password">> {
+  ): Promise<Omit<UserData, "password">> {
     const updated = await prisma.user.update({
       where: {
         id,
@@ -94,7 +110,7 @@ class UserRepository implements IUserRepository {
   async updateEmail(
     id: number,
     email: string
-  ): Promise<Omit<UserDataDTO, "password">> {
+  ): Promise<Omit<UserData, "password">> {
     const updated = await prisma.user.update({
       where: {
         id,
@@ -108,7 +124,7 @@ class UserRepository implements IUserRepository {
   async updateProfileBg(
     id: number,
     profile_bg: string
-  ): Promise<Omit<UserDataDTO, "password">> {
+  ): Promise<Omit<UserData, "password">> {
     const updated = await prisma.user.update({
       where: {
         id,
@@ -122,7 +138,7 @@ class UserRepository implements IUserRepository {
   async updateProfilePicture(
     id: number,
     profile_picture: string
-  ): Promise<Omit<UserDataDTO, "password">> {
+  ): Promise<Omit<UserData, "password">> {
     const updated = await prisma.user.update({
       where: {
         id,
