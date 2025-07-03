@@ -12,15 +12,22 @@ import {
   likePostSchema,
   unlikePostSchema,
 } from "../schemas/post";
+import { FindPostsByUserSlugUseCase } from "../../application/useCases/Post/FindPostsByUserSlugUseCase";
+import { FindPostByIdUseCase } from "../../application/useCases/Post/FindPostByIdUseCase";
+import { slugSchema } from "../schemas/user";
+import { FindPostsByContentUseCase } from "../../application/useCases/Post/FindPostsByContentUseCase";
 
 class PostController {
   static async create(req: Request, res: Response) {
     try {
-      const { content, image } = zodSchemaHandler(createPostSchema, req.body);
+      const { user_id, content, image } = zodSchemaHandler(
+        createPostSchema,
+        req.body
+      );
 
       const created = await container
         .resolve(CreatePostUseCase)
-        .execute(content, image);
+        .execute(user_id, content, image);
       res.status(201).json(created);
       return;
     } catch (error) {
@@ -66,6 +73,48 @@ class PostController {
         .execute(post_id, user_id);
       res.status(200).json(unliked);
 
+      return;
+    } catch (error) {
+      errorHandler(error, res);
+      return;
+    }
+  }
+
+  static async findById(req: Request, res: Response) {
+    try {
+      const { id } = zodSchemaHandler(idSchema, req.params.id);
+
+      const post = await container.resolve(FindPostByIdUseCase).execute(id);
+      res.status(200).json(post);
+      return;
+    } catch (error) {
+      errorHandler(error, res);
+      return;
+    }
+  }
+  static async findByUserSlug(req: Request, res: Response) {
+    try {
+      const { slug } = zodSchemaHandler(slugSchema, req.params.slug);
+
+      const posts = await container
+        .resolve(FindPostsByUserSlugUseCase)
+        .execute(slug);
+      res.status(200).json(posts);
+      return;
+    } catch (error) {
+      errorHandler(error, res);
+      return;
+    }
+  }
+
+  static async FindByContent(req: Request, res: Response) {
+    try {
+      const { content } = zodSchemaHandler(idSchema, req.params.content);
+
+      const posts = await container
+        .resolve(FindPostsByContentUseCase)
+        .execute(content);
+      res.status(200).json(posts);
       return;
     } catch (error) {
       errorHandler(error, res);
