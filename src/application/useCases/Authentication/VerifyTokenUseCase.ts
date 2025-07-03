@@ -5,7 +5,7 @@ import ITokenService from "../../../domain/services/ITokenService";
 class VerifyTokenUseCase {
   constructor(@inject("TokenService") private tokenService: ITokenService) {}
 
-  async execute(token: string): Promise<string> {
+  async execute(token: string): Promise<{ user_id: number; token: string }> {
     return await this.tokenService.verifyToken(token);
   }
 }
