@@ -1,13 +1,40 @@
-import Post, { PostDataDTO } from "../../domain/entities/Post";
-import IPostRepository from "../../domain/repositories/IPostRepository";
+import IPostRepository, {
+  PostCreationInputs,
+  PostData,
+} from "../../domain/repositories/IPostRepository";
 import prisma from "../libs/prisma/PrismaClient";
 
 class PostRepository implements IPostRepository {
-  async create(post: PostDataDTO): Promise<void> {
+  async create(post: PostCreationInputs): Promise<void> {
     await prisma.post.create({
-      data: post,
+      data: {
+        content: post.content,
+        author: {
+          connect: {
+            id: post.user_id,
+          },
+        },
+        image: post.image,
+      },
     });
   }
+  async findById(id: number): Promise<PostData | null> {
+    return await prisma.post.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    });
+  }
+
   async delete(id: number): Promise<void> {
     await prisma.post.delete({
       where: {
@@ -15,18 +42,38 @@ class PostRepository implements IPostRepository {
       },
     });
   }
-  async findByContent(content: string): Promise<PostDataDTO[] | null> {
+  async findByContent(content: string): Promise<PostData[] | null> {
     return await prisma.post.findMany({
       where: {
-        content,
+        content: {
+          contains: content,
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     });
   }
-  async findByUserSlug(slug: string): Promise<PostDataDTO[] | null> {
+  async findByUserSlug(slug: string): Promise<PostData[] | null> {
     return await prisma.post.findMany({
       where: {
         author: {
           slug,
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
         },
       },
     });
