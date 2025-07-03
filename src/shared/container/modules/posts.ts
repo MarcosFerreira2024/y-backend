@@ -5,6 +5,9 @@ import CreatePostUseCase from "../../../application/useCases/Post/CreatePostUseC
 import DeletePostUseCase from "../../../application/useCases/Post/DeletePostUseCase";
 import LikePostUseCase from "../../../application/useCases/Post/LikePostUseCase";
 import UnlikePostUseCase from "../../../application/useCases/Post/UnlikePostUseCase";
+import { FindPostByIdUseCase } from "../../../application/useCases/Post/FindPostByIdUseCase";
+import { FindPostsByContentUseCase } from "../../../application/useCases/Post/FindPostsByContentUseCase";
+import { FindPostsByUserSlugUseCase } from "../../../application/useCases/Post/FindPostsByUserSlugUseCase";
 
 container.registerSingleton<IPostRepository>("PostRepository", PostRepository);
 
@@ -12,3 +15,6 @@ container.registerSingleton(CreatePostUseCase);
 container.registerSingleton(DeletePostUseCase);
 container.registerSingleton(LikePostUseCase);
 container.registerSingleton(UnlikePostUseCase);
+container.registerSingleton(FindPostByIdUseCase);
+container.registerSingleton(FindPostsByContentUseCase);
+container.registerSingleton(FindPostsByUserSlugUseCase);

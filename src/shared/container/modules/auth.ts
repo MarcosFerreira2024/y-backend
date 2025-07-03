@@ -4,7 +4,12 @@ import JwtProvider from "../../../infrastructure/libs/jwt/JwtProvider";
 import LoginUseCase from "../../../application/useCases/Authentication/LoginUseCase";
 import ITokenService from "../../../domain/services/ITokenService";
 import TokenService from "../../../infrastructure/services/TokenService";
+import VerifyTokenUseCase from "../../../application/useCases/Authentication/VerifyTokenUseCase";
 
 container.registerSingleton<IJwtProvider>("JwtProvider", JwtProvider);
+
 container.registerSingleton(LoginUseCase);
+
 container.registerSingleton<ITokenService>("TokenService", TokenService);
+
+container.registerSingleton(VerifyTokenUseCase);
