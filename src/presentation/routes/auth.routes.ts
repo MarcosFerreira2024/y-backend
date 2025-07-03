@@ -6,5 +6,6 @@ const auth_routes = Router();
 
 auth_routes.post("/register", UserController.create);
 auth_routes.post("/login", AuthController.login);
+auth_routes.post("/verify-token", AuthController.verifyToken);
 
 export { auth_routes };
